@@ -26,11 +26,20 @@ def clean(text):
     return text if 1 < len(text) < 80 else ''
 
 def collect(driver):
+    # 기존 CSV에서 브랜드 불러오기 (이어 크롤링)
     brands = set()
-
-    # 파일 초기화 (헤더 쓰기)
-    with open(OUT, 'w', newline='', encoding='utf-8-sig') as f:
-        csv.writer(f).writerow(['ブランド名'])
+    if os.path.exists(OUT):
+        with open(OUT, 'r', newline='', encoding='utf-8-sig') as f:
+            reader = csv.reader(f)
+            next(reader, None)  # 헤더 스킵
+            for row in reader:
+                if row:
+                    brands.add(row[0])
+        print(f"기존 수집 브랜드 {len(brands)}개 로드 완료. 이어서 크롤링합니다.")
+    else:
+        # 파일 없으면 헤더만 초기화
+        with open(OUT, 'w', newline='', encoding='utf-8-sig') as f:
+            csv.writer(f).writerow(['ブランド名'])
 
     driver.get(URL)
     WebDriverWait(driver, 15).until(
