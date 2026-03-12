@@ -60,14 +60,19 @@ def collect(driver):
                     w.writerow([b])
             print(f"  새로 저장됨: {len(current_batch)}개 / 누적: {len(brands)}개")
 
-        # 3. 중복률 체크 (조기 종료 로직)
+        # 3. 300개 도달 시 종료
+        if len(brands) >= 300:
+            print(f"✅ 목표 300개 달성. 크롤링을 종료합니다.")
+            break
+
+        # 4. 중복률 체크 (조기 종료 로직)
         if len(elements) > 0:
             duplicate_rate = (len(elements) - new_count) / len(elements)
             if duplicate_rate >= 0.8:
                 print(f"⚠️ 중복률 {duplicate_rate:.1%} 도달. 크롤링을 종료합니다.")
                 break
 
-        # 4. 더보기 버튼 탐색
+        # 5. 더보기 버튼 탐색
         more_btn = None
         for sel in ["a.btn_more", "button.btn_more", ".more_btn a",
                     "a[class*='more']", "button[class*='more']",
